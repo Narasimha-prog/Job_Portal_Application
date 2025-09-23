@@ -1,0 +1,5 @@
+spring:
+  application:
+            name: Job_Portal_Application
+  profiles:
+    active: local
