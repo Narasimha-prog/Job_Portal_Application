@@ -1,1 +1,113 @@
 
+logging:
+  level:
+    ROOT: INFO
+    org.hibernate.SQL: INFO
+    com.lnr.ecom: INFO
+
+spring:
+
+  # docker run automatically when application run
+  docker:
+    compose:
+      enabled: false
+
+  # application name
+  application:
+    name: Job_Portal_Application
+
+   #  virtual threads
+  threads:
+    virtual:
+      enabled: true
+
+  # data base configuration
+  datasource:
+    url: jdbc:postgresql://dpg-d30q7her433s738ebkb0-a.oregon-postgres.render.com:5432/ecommerce_94kr
+    username: ecom_user
+    password: TopqsWsaGP1x0PBEoHsr97kEsg08ZnaD
+
+  # database pool config
+    hikari:
+      poolName: Hikari
+      auto-commit: false
+    driver-class-name: org.postgresql.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+  # data jpa config
+  data:
+    jpa:
+      repositories:
+        bootstrap-mode: deferred
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+          batch_size: 25
+        query:
+          fail_on_pagination_over_collection_fetch: true
+          in_clause_parameter_padding: true
+        generate_statistics: false
+        order_updates: true
+        connection:
+          provider_disables_autocommit: true
+        order_inserts: true
+        default_schema: public
+    hibernate:
+      ddl-auto: validate
+      naming:
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    open-in-view: false
+
+  #database version control
+  liquibase:
+    change-log: classpath:db/changelog/master.xml
+    default-schema: public
+    contexts: dev
+  #    drop-first: true
+
+
+  #security of
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://lnreddy.kinde.com
+          jwk-set-uri: https://lnreddy.kinde.com/.well-known/jwks
+          audiences: https://ecommercefullstackapplication.onrender.com/api
+
+  #dev tools
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: false
+  # enable uploading images...
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+#server port config
+server:
+  port: ${PORT:7878}
+
+
+# cors properties to allow client
+application:
+  client-base-url: https://ecommercefullstackapplication-frontend.onrender.com
+  cors:
+    allowed-origins:
+      - https://ecommercefullstackapplication-frontend.onrender.com
+      - http://localhost:4200
+    allowed-methods: "*"
+    allowed-headers: "*"
+    exposed-headers: "*"
+    allow-credentials: false
+    max-age: 300
+
+# authentication
+
+
+client-base-url: https://ecommercefullstackapplication-frontend.onrender.com
