@@ -1,106 +1,95 @@
 package lnr.Job_Portal_Application.job.domain.user.aggrigate;
 
-import lnr.Job_Portal_Application.job.domain.user.vo.UserFirstName;
+import lnr.Job_Portal_Application.job.domain.user.vo.*;
+import lnr.Job_Portal_Application.job.infrastructure.secondary.entity.UserEntity;
+import lnr.Job_Portal_Application.shared.error.domain.Assert;
 import lombok.*;
+import org.jilt.Builder;
 
 import java.time.Instant;
-import java.util.UUID;
-@Builder
-@NoArgsConstructor
-@Data
+import java.util.*;
+@Getter
 public class User {
 
-    private UserFirstName firstName;
-
-    private UserLastName lastName;
-
-    private UserEmail email;
-
-    private UserPublicId publicId;
-
-    private UserImageUrl imageUrl;
-
-    private Instant lastModifInstant;
-
-    private Instant createdInstant;
-
-    private Set<Authority>  authorities;
-
-    private Long dbId;
-
-    private UserAddress address;
-
+    private Long dbId; // database id
+    private FirstName firstName;
+    private LastName lastName;
+    private Email email;
+    private Set<Authority> authorities;
+    private final Instant createdInstant;
+    private PublicId publicId;
+    private ImageUrl imageUrl;
+    private Instant lastModifiedInstant;
+    private Address address;
     private Instant lastSeenDate;
 
-    public User(UserFirstName firstName, UserLastName lastName, UserEmail email, UserPublicId publicId, UserImageUrl imageUrl, Instant lastModifInstant, Instant createdInstant, Set<Authority> authorities, Long dbId, UserAddress address, Instant lastSeenDate) {
-        assertMandatoryField(firstName,lastName,email,authorities);
+    private User(Long dbId, FirstName firstName, LastName lastName, Email email, PublicId publicId, ImageUrl imageUrl,
+                 Address address, Instant lastSeenDate, Instant createdInstant, Instant lastModifiedInstant) {
+
+        //Set<Authority> authorities
+        Assert.notNull("FirstName", firstName);
+        Assert.notNull("LastName", lastName);
+        Assert.notNull("Email", email);
+       // Assert.notNull("Authorities", authorities);
+
+        this.dbId = dbId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+       // this.authorities = new HashSet<>(authorities);
         this.publicId = publicId;
         this.imageUrl = imageUrl;
-        this.lastModifInstant = lastModifInstant;
-        this.createdInstant = createdInstant;
-        this.authorities = authorities;
-        this.dbId = dbId;
         this.address = address;
         this.lastSeenDate = lastSeenDate;
+        this.createdInstant = createdInstant != null ? createdInstant : Instant.now();
+        this.lastModifiedInstant = lastModifiedInstant;
     }
 
-    private void assertMandatoryField(UserFirstName firstName,UserLastName lastName,UserEmail email,Set<Authority> authorities){
-        Assert.notNull("FirstName",firstName);
-        Assert.notNull("LastName",lastName);
-        Assert.notNull("Email",email);
-        Assert.notNull("Authority",authorities);
+    // Factory for creating new user
+    public static User create(FirstName firstName, LastName lastName, Email email,
+                              Set<Authority> authorities, PublicId publicId,
+                              ImageUrl imageUrl, Address address, Instant lastSeenDate) {
+        return new User(null, firstName, lastName, email, publicId, imageUrl, address, lastSeenDate, Instant.now(), null);
+    }
+    //authorities
+
+    // Factory for rehydration from entity
+    public static User fromEntity(UserEntity entity) {
+        return new User(
+                entity.getId(),
+                new FirstName(entity.getFirstName()),
+                new LastName(entity.getLastName()),
+                new Email(entity.getEmail()),
+//                new HashSet<>(entity.getAuthorities()),
+                new PublicId(entity.getPublicId()),
+                new ImageUrl(entity.getImageUrl()),
+                new Address(entity.getAddressStreet(),entity.getAddressCity(),entity.getAddressZipCode(),entity.getAddressCountry()),
+                entity.getLastSeen(),
+                entity.getCreatedDate(),
+                entity.getLastModifiedDate()
+        );
     }
 
-    public void updateFromUser(User user){
-        this.email=user.email;
-        this.firstName=user.firstName;
-        this.lastName=user.lastName;
-        this.imageUrl=user.imageUrl;
-        this.lastSeenDate = user.lastSeenDate;
+
+    // Domain behavior
+    public void updateName(FirstName firstName, LastName lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.lastModifiedInstant = Instant.now();
     }
 
-    public void intiFieldsForSignUp(){
-        this.publicId= new UserPublicId(UUID.randomUUID());
+    public void updateEmail(Email newEmail) {
+        this.email = newEmail;
+        this.lastModifiedInstant = Instant.now();
     }
 
-    public static User fromTokenAttributes(Map<String,Object> attributes, List<String> rolesFromAuthorities ) {
-        UserBuilder userBuilder = new UserBuilder();
-        if (attributes.containsKey("preferred_email")) {
-            userBuilder.email(new UserEmail(attributes.get("preferred_email").toString()));
-        }
-        if (attributes.containsKey("last_name")) {
-            userBuilder.lastName(new UserLastName(attributes.get("last_name").toString()));
-        }
-        if (attributes.containsKey("first_name")) {
-            userBuilder.firstName(new UserFirstName(attributes.get("first_name").toString()));
-        }
-        if (attributes.containsKey("picture")) {
-            userBuilder.imageUrl(new UserImageUrl(attributes.get("picture").toString()));
-        }
-
-        if (attributes.containsKey("last_signed_in")) {
-            try {
-                userBuilder.lastSeenDate(Instant.parse(attributes.get("last_signed_in").toString()));
-            } catch (Exception e) {
-                userBuilder.lastSeenDate(Instant.now());
-            }
-        } else {
-            userBuilder.lastSeenDate(Instant.now());
-        }
-
-        Set<Authority> authorities=  rolesFromAuthorities
-                .stream()
-                .map(authority-> AuthorityBuilder.authority().name(new AuthorityName(authority)).build())
-                .collect(Collectors.toSet());
-
-        userBuilder.authorities(authorities);
-
-
-        return userBuilder.build();
-
+    public void grantAuthority(Authority authority) {
+        this.authorities.add(authority);
+        this.lastModifiedInstant = Instant.now();
     }
 
+    public void revokeAuthority(Authority authority) {
+        this.authorities.remove(authority);
+        this.lastModifiedInstant = Instant.now();
+    }
 }

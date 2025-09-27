@@ -80,6 +80,12 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+        <!-- https://mvnrepository.com/artifact/cc.jilt/jilt -->
+        <dependency>
+            <groupId>cc.jilt</groupId>
+            <artifactId>jilt</artifactId>
+            <version>1.8.3</version>
+        </dependency>
 	</dependencies>
 
 	<build>

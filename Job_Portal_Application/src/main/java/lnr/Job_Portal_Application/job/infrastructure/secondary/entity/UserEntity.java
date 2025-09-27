@@ -66,7 +66,7 @@ public class UserEntity extends AbstractAuditingEntity<Long> {
     private Set<AuthorityEntity> authorities=new HashSet<>();
 
 
-    public void updateFromUser(User user){
+    public void fromUser(User user){
 
 //        this.firstName=user.getFirstName().userFirstName();
 //        this.lastName=user.getLastName().userLastName();

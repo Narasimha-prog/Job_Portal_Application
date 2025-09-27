@@ -23,9 +23,9 @@ spring:
 
   # data base configuration
   datasource:
-    url: jdbc:postgresql://dpg-d30q7her433s738ebkb0-a.oregon-postgres.render.com:5432/ecommerce_94kr
-    username: ecom_user
-    password: TopqsWsaGP1x0PBEoHsr97kEsg08ZnaD
+    url: jdbc:postgresql://localhost/job_portal
+    username: lnr
+    password: Admin@123
 
   # database pool config
     hikari:
@@ -54,7 +54,7 @@ spring:
         order_inserts: true
         default_schema: public
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
       naming:
         implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
@@ -65,24 +65,24 @@ spring:
     change-log: classpath:db/changelog/master.xml
     default-schema: public
     contexts: dev
-  #    drop-first: true
+    drop-first: true
 
 
-  #security of
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: https://lnreddy.kinde.com
-          jwk-set-uri: https://lnreddy.kinde.com/.well-known/jwks
-          audiences: https://ecommercefullstackapplication.onrender.com/api
+#  #security of
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri: https://lnreddy.kinde.com
+#          jwk-set-uri: https://lnreddy.kinde.com/.well-known/jwks
+#          audiences: https://ecommercefullstackapplication.onrender.com/api
 
   #dev tools
   devtools:
     restart:
-      enabled: false
+      enabled: true
     livereload:
-      enabled: false
+      enabled: true
   # enable uploading images...
   servlet:
     multipart:
