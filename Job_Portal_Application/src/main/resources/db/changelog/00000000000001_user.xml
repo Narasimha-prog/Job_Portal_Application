@@ -9,10 +9,11 @@
     </changeSet>
 
     <changeSet id="00000000000001-user" author="lnr">
-        <createTable tableName="ecommerce_user">
+        <createTable tableName="job_user">
             <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
+
             <column name="public_id" type="${uuidType}">
                 <constraints nullable="false" unique="true"/>
             </column>
@@ -35,6 +36,7 @@
     </changeSet>
 
     <changeSet id="00000000000001-authority" author="lnr">
+
         <createTable tableName="authority">
             <column name="name" type="varchar(50)">
                 <constraints primaryKey="true" nullable="false"/>
@@ -62,7 +64,7 @@
                                  baseTableName="user_authority"
                                  constraintName="fk_user_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="ecommerce_user"/>
+                                 referencedTableName="job_user"/>
         <loadData
                 file="db/data/authority.csv"
                 separator=";"
@@ -71,4 +73,5 @@
             <column name="name" type="string"/>
         </loadData>
     </changeSet>
+
 </databaseChangeLog>

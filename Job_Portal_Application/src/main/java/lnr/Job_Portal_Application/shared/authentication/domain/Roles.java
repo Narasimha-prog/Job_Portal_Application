@@ -3,6 +3,7 @@ import lnr.Job_Portal_Application.shared.error.domain.Assert;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Stream;
+
 public record Roles(Set<Role> roles) {
 
         public static final Roles EMPTY = new Roles(null);

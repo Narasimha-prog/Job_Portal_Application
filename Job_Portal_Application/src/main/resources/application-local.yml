@@ -40,6 +40,7 @@ spring:
         bootstrap-mode: deferred
   jpa:
     properties:
+      javax.persistence.validation.mode: AUTO
       hibernate:
         jdbc:
           time_zone: UTC
@@ -54,7 +55,7 @@ spring:
         order_inserts: true
         default_schema: public
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
       naming:
         implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
@@ -64,7 +65,9 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/master.xml
     default-schema: public
+    #Liquibase will run only the change sets tagged and without tag
     contexts: dev
+    #before start remove data
     drop-first: true
 
 
